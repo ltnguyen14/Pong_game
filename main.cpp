@@ -28,7 +28,7 @@ float ball_pos_y = screenHeight / 2;
 float ball_dir_x = 1.0f;
 float ball_dir_y = 0.0f;
 int ball_size = 10;
-int ball_speed = 2;
+int ball_speed = 5;
 
 void vec2_norm(float& x, float &y) {
         float length = sqrt((x * x) + (y * y));
@@ -54,10 +54,10 @@ void update_ball(){
     }
 
     // check right paddle
-    if (ball_pos_x >= paddle_right_x &&
-        ball_pos_x <= paddle_right_x + paddle_width &&
-        ball_pos_y <= paddle_right_y + paddle_height &&
-        ball_pos_y >= paddle_right_y) {
+    if (ball_pos_x + ball_size >= paddle_right_x &&
+        ball_pos_x + ball_size <= paddle_right_x + paddle_width &&
+        ball_pos_y + ball_size <= paddle_right_y + paddle_height &&
+        ball_pos_y + ball_size >= paddle_right_y) {
         float t = ((ball_pos_y - paddle_right_y) / paddle_height) - 0.5f;
         ball_dir_x = -fabs(ball_dir_x);
         ball_dir_y = t;
@@ -103,15 +103,13 @@ void draw_paddle(float x, float y, float width, float height) {
     glEnd();
 }
 
-void print(int x, int y, char *string)
+void print(int x, int y, char *left, char *right)
 {
   glRasterPos2f(x,y);
-  int len = (int) strlen(string);
 
-  for (int i = 0; i < len; i++)
-  {
-  glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,string[i]);
-  }
+  glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,left[0]);
+  glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,':');
+  glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,right[0]);
 };
 
 void myInit(void){
@@ -141,13 +139,17 @@ void display(){
     glLoadIdentity();
 
     // Draw two paddles
+    glColor3f(0.0f, 1.0f, 0.0f);
     draw_paddle(paddle_left_x, paddle_left_y, paddle_width, paddle_height);
     draw_paddle(paddle_right_x, paddle_right_y, paddle_width, paddle_height);
 
     // Draw the ball
+    glColor3f(1.0f, 0.0f, 0.0f);
     draw_paddle(ball_pos_x, ball_pos_y, ball_size, ball_size);
-
-    print(screenWidth / 2 - 120, screenHeight - 30, "The best Pong game ever");
+    char right_scr, left_scr;
+    right_scr = score_right + '0';
+    left_scr = score_left + '0';
+    print(screenWidth / 2 - 10, screenHeight - 30, &left_scr, &right_scr);
 
     glutSwapBuffers();
 }
